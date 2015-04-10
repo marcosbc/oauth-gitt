@@ -51,12 +51,19 @@ Include "/opt/bitnami/hosted/oauth-gitt/service/conf/httpd-vhosts.conf"
 Include "/opt/bitnami/hosted/oauth-gitt/oauth-server/conf/httpd-vhosts.conf"
 ```
 
+No hay que olvidar que es necesario un reinicio de Apache para que estos
+cambios tengan efecto:
+
+```
+$ sudo /opt/bitnami/ctlscript.sh restart apache
+```
+
 #### Configurar Git
 
 No os olvidéis de añadir los datos vuestros de Git para que cada uno sepa quién ha hecho un asentamiento:
 
 ```
-$ git congit --global user.name "TU NOMBRE COMPLETO"
+$ git congit --global user.name "TU NOMBRE COMPLETO o USUARIO_DE_GITHUB"
 $ git config --global user.email "TU_EMAIL@gmail.com"
 ```
 
