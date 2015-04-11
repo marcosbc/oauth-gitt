@@ -75,6 +75,14 @@ Para subir cambios asentados ("commited changes"), solo tenéis que ejecutar lo 
 $ git push origin master
 ```
 
+### Bajar los últimos cambios
+
+Para bajar los últimos cambios, tenéis que ejecutar lo siguiente:
+
+```
+$ git pull origin master
+```
+
 ### Acceder a la aplicación en servidor local
 
 Para poder probarla en local, deberéis añadir las siguientes líneas a `/etc/hosts`.
