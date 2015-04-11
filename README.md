@@ -75,7 +75,7 @@ Para subir cambios asentados ("commited changes"), solo tenéis que ejecutar lo 
 $ git push origin master
 ```
 
-### Bajar los últimos cambios
+#### Bajar los últimos cambios
 
 Para bajar los últimos cambios, tenéis que ejecutar lo siguiente:
 
