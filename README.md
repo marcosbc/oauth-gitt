@@ -1,105 +1,65 @@
 # OAuth
 
-## Instalación
+## Enlaces
+[Instalación](INSTALL.md)
 
-### Instalación de la LAMP Stack
+## Organización del proyecto
 
-Una LAMP Stack incluye los componentes principales que usaremos: Apache, MySQL y PHP, además estar configurados adecuadamente.
+Habrán dos equipos:
+
+- **Equipo de desarrollo**: Desarrollará los servicios a poner en marcha, junto con la temática y se asegurará de que el equipo de seguridad puede aprovechar este entorno.
+- **Equipo de seguridad**: Desarrollará los tests de seguridad a llevar a cabo, preparará los entornos sobre los que realizar estos tests; finalmente, las llevará finalmente al cabo con las aplicaciones proporcionadas por el equipo de desarrollo. Compuesto por Jaime (coordinador), Pablo y Álvaro.
+
+### Equipo de desarrollo
+
+- Marcos (coordinador):
+  * Coordinación entre los equipos de desarrollo y seguridad con Jaime.
+  * Coordinación del equipo de desarrollo (Marcos y Pablo).
+  * Lectura del RFC 6749 (especialmente la relativa al desarrollo).
+  * Desarrollo del servicio (de vista a los clientes, con OAuth 2.0).
+  * Supervisión del documento borrador, para dar paso al documento final.
+- Luís:
+  * Propuesta de idea sobre la que se va a basar el servicio. Tiene que ser **original**.
+  * Desarrollo del servicio (de vista a los usuarios). Debe de ser **funcional**, intercompatible con la parte de OAuth.
+  * Desarrollo del servicio cliente (el que se comunicará con OAuth).
+  * Redacción del borrador del documento final, relacionado al conjunto de aplicaciones desarrolladas.
+
+### Equipo de seguridad
+
+- Jaime (coordinador):
+  * Coordinación entre los equipos de desarrollo y seguridad con Marcos.
+  * Coordinación del equipo de auditoría (Jaime, Pablo y Álvaro).
+  * Lectura del RFC 6749 (especialmente la relativa a la seguridad).
+  * Diseño del plan de auditoría:
+    - Qué pruebas de seguridad realizar. Por ejemplo: Man in the middle, CSFR... Al menos 3 por persona, realizado mediante propuestas (con la ayuda de los demás componentes del equipo) y con la declaración de todos los componentes que serían necesarios en el entorno.
+	- Poner en marcha los entornos necesarios (vía ramas de Git, hijas de *master*).
+  * Desarrollo de algunos tests de seguridad.
+  * Redacción del borrador del documento final de la parte de seguridad que ha realizado.
+- Pablo:
+  * Lectura del RFC 6749 (entero) y tomar notas.
+  * Desarrollar tests de seguridad que decida Jaime.
+  * Redacción del borrador del documento final de la parte de seguridad que ha realizado.
+  * Redacción de la parte de funcionamiento del protocolo OAuth.
+- Álvaro:
+  * Lectura del RFC 6749 (entero) y tomar notas.
+  * Desarrollo de los tests de seguridad que decida Jaime.
+  * Redacción del borrador del documento final de la parte de seguridad que ha realizado.
+  * Redacción de la parte de funcionamiento del protocolo OAuth.
+
+#### Cómo realizar una propuesta de prueba de seguridad
+
+Se va a realizar un test de seguridad por vulnerabilidad a la que se decida sacar juego (serán en gran parte por no tomar las medidas de seguridad adecuadas por parte del administrador de sistemas).
+Para ello, será necesario **por cada prueba**:
+
+1. Lectura del RFC sobre pistas de esta vulnerabilidad.
+2. Desarrollo de la propuesta (Jaime, con la ayuda de Pablo y Álvaro), que deberá contener:
+  * Título.
+  * Descripción de la vulnerabilidad.
+  * Descripción sobre el ataque a realizar.
+  * Entorno necesario a preparar.
+  * Cómo se llevará a cabo el ataque.
+3. Implementación del ataque (por Pablo y Álvaro, con la ayuda de Jaime).
+
+Por ello, como se observará, el desarrollo del grupo de seguridad será muy teórico (lo cual viene bien ya que el equipo de desarrollo no estará listo antes de que comience este equipo su trabajo).
 
 
-Vamos a basarnos en una [LAMP Stack de Bitnami](https://bitnami.com/stack/lamp), con la intención de poder reutilizar el código entre todos para el entorno local y el remoto a la vez, y poder actualizarlo a medida que se va actualizando este repositorio.
- 
-
-Para ello, hay que seguir los siguientes pasos (los pasos son para una instalación de Linux x64, pero se puede realizar en Linux x86 y Mac OS X si es de vuestra preferencia):
-```
-$ cd ~
-$ wget https://bitnami.com/redirect/to/51769/bitnami-lampstack-5.4.39-0-linux-x64-installer.run
-$ chmod a+x ./bitnami-lampstack-5.4.39-0-linux-x64-installer.run
-$ sudo ./bitnami-lampstack-5.4.39-0-linux-x64-installer.run
-```
-
-Y ya seguís los pasos de la instalación. Notas:
-
-- El directorio de instalación deberá ser `/opt/bitnami`.
-- Intentad instalarlo en vuestro puerto 80, si ya está ocupado, desactivar la aplicación que lo use hasta que terminemos este proyecto.
-
-### Instalación y configuración de nuestros ejemplos de OAuth
-
-Nota: Antes de empezar este paso, deberéis aseguraros que tenéis una clave privada en `~/.ssh` (por defecto se denomina `id_rsa`).
-
-- Si la tienes, genera una clave pública a través de esta clave (privada), y subid la clave pública a vuestra configuración de GitHub.
-- Si no la tienes, genera una nueva clave privada (denomínala `id_rsa`) y genera una pública a través de esta. Deben estar localizadas en `~/.ssh`. Sube esta clave pública generada a GitHub.
-
-Una vez instalada la LAMP Stack, seguid los siguientes pasos para clonar el repositorio y preparar la aplicación:
-
-```
-$ sudo su -
-$ mkdir /opt/bitnami/hosted
-$ cd /opt/bitnami/hosted
-$ git clone https://github.com/marcosbc/oauth-gitt.git
-$ cd oauth-gitt
-```
-
-#### Configurar Apache
-
-Para que nuestros ejemplos sean accesibles, antes tenemos que asegurarnos que Apache está cogiendo los ficheros de configuración.
-Para ello, hay que añadir las siguientes líneas a `/opt/bitnami/apache2/conf/bitnami/bitnami-apps-vhosts.conf`:
-
-```
-Include "/opt/bitnami/hosted/oauth-gitt/client/conf/httpd-vhosts.conf"
-Include "/opt/bitnami/hosted/oauth-gitt/service/conf/httpd-vhosts.conf"
-Include "/opt/bitnami/hosted/oauth-gitt/oauth-server/conf/httpd-vhosts.conf"
-```
-
-No hay que olvidar que es necesario un reinicio de Apache para que estos
-cambios tengan efecto:
-
-```
-$ sudo /opt/bitnami/ctlscript.sh restart apache
-```
-
-#### Configurar Git
-
-No os olvidéis de añadir los datos vuestros de Git para que cada uno sepa quién ha hecho un asentamiento:
-
-```
-$ git congit --global user.name "TU NOMBRE COMPLETO o USUARIO_DE_GITHUB"
-$ git config --global user.email "TU_EMAIL@gmail.com"
-```
-
-#### Subir cambios
-
-Para subir cambios asentados ("commited changes"), solo tenéis que ejecutar lo siguiente:
-
-```
-$ git push origin master
-```
-
-#### Bajar los últimos cambios
-
-Para bajar los últimos cambios, tenéis que ejecutar lo siguiente:
-
-```
-$ git pull origin master
-```
-
-### Acceder a la aplicación en servidor local
-
-Para poder probarla en local, deberéis añadir las siguientes líneas a `/etc/hosts`.
-
-```
-127.0.0.1 oauthg10.tk
-127.0.0.1 www.oauthg10.tk
-127.0.0.1 client.oauthg10.tk
-127.0.0.1 www.client.oauthg10.tk
-127.0.0.1 service.oauthg10.tk
-127.0.0.1 www.service.oauthg10.tk
-```
-
-Por ejemplo, se puede realizar de la siguiente manera en un paso:
-
-```
-$ sudo sh -c "echo '127.0.0.1 oauthg10.tk\n127.0.0.1 www.oauthg10.tk\n127.0.0.1 client.oauthg10.tk\n127.0.0.1 www.client.oauthg10.tk\n127.0.0.1 service.oauthg10.tk\n127.0.0.1 www.service.oauthg10.tk' >> /etc/hosts"
-```
-
-Entonces, deberíamos poder acceder a http://oauthg10.tk/, http://client.oauthg10.tk/ y http://service.oauthg10.tk/ desde nuestro navegador.
