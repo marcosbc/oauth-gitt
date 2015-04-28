@@ -1,7 +1,12 @@
 # OAuth
 
 ## Enlaces
-[Instalación](INSTALL.md)
+
+Los siguientes enlaces servirán para documentación:
+
+- [Instalación](INSTALL.md)
+- [RFC 6749](https://tools.ietf.org/html/rfc6749)
+- [Wikipedia sobre OAuth](http://es.wikipedia.org/wiki/OAuth)
 
 ## Organización del proyecto
 
@@ -12,13 +17,13 @@ Habrán dos equipos:
 
 ### Equipo de desarrollo
 
-- Marcos (coordinador):
+- **Marcos** (coordinador):
   * Coordinación entre los equipos de desarrollo y seguridad con Jaime.
   * Coordinación del equipo de desarrollo (Marcos y Pablo).
   * Lectura del RFC 6749 (especialmente la relativa al desarrollo).
   * Desarrollo del servicio (de vista a los clientes, con OAuth 2.0).
   * Supervisión del documento borrador, para dar paso al documento final.
-- Luís:
+- **Luís**:
   * Propuesta de idea sobre la que se va a basar el servicio. Tiene que ser **original**.
   * Desarrollo del servicio (de vista a los usuarios). Debe de ser **funcional**, intercompatible con la parte de OAuth.
   * Desarrollo del servicio cliente (el que se comunicará con OAuth).
@@ -26,7 +31,7 @@ Habrán dos equipos:
 
 ### Equipo de seguridad
 
-- Jaime (coordinador):
+- **Jaime** (coordinador):
   * Coordinación entre los equipos de desarrollo y seguridad con Marcos.
   * Coordinación del equipo de auditoría (Jaime, Pablo y Álvaro).
   * Lectura del RFC 6749 (especialmente la relativa a la seguridad).
@@ -35,12 +40,12 @@ Habrán dos equipos:
 	- Poner en marcha los entornos necesarios (vía ramas de Git, hijas de *master*).
   * Desarrollo de algunos tests de seguridad.
   * Redacción del borrador del documento final de la parte de seguridad que ha realizado.
-- Pablo:
+- **Pablo**:
   * Lectura del RFC 6749 (entero) y tomar notas.
   * Desarrollar tests de seguridad que decida Jaime.
   * Redacción del borrador del documento final de la parte de seguridad que ha realizado.
   * Redacción de la parte de funcionamiento del protocolo OAuth.
-- Álvaro:
+- **Álvaro**:
   * Lectura del RFC 6749 (entero) y tomar notas.
   * Desarrollo de los tests de seguridad que decida Jaime.
   * Redacción del borrador del documento final de la parte de seguridad que ha realizado.
