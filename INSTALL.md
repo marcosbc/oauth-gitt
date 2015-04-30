@@ -89,8 +89,8 @@ Para poder probarla en local, deberéis añadir las siguientes líneas a `/etc/h
 127.0.0.1 www.oauthg10.tk
 127.0.0.1 client.oauthg10.tk
 127.0.0.1 www.client.oauthg10.tk
-127.0.0.1 service.oauthg10.tk
-127.0.0.1 www.service.oauthg10.tk
+127.0.0.1 oauth.oauthg10.tk
+127.0.0.1 www.oauth.oauthg10.tk
 ```
 
 Por ejemplo, se puede realizar de la siguiente manera en un paso:
