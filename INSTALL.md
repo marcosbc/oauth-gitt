@@ -46,7 +46,6 @@ Para ello, hay que añadir las siguientes líneas a `/opt/bitnami/apache2/conf/b
 ```
 Include "/opt/bitnami/hosted/oauth-gitt/client/conf/httpd-vhosts.conf"
 Include "/opt/bitnami/hosted/oauth-gitt/service/conf/httpd-vhosts.conf"
-Include "/opt/bitnami/hosted/oauth-gitt/oauth-server/conf/httpd-vhosts.conf"
 ```
 
 No hay que olvidar que es necesario un reinicio de Apache para que estos
