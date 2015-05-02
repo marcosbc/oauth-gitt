@@ -31,7 +31,8 @@
 		'transactions' => array(
 			// the first one is the PRIMARY KEY
 			'tid' => 'INT UNSIGNED NOT NULL',
-			'description' => 'VARCHAR(100)',
+			'to_description' => 'VARCHAR(100)',
+			'from_description' => 'VARCHAR(100)',
 			'quantity' => 'DOUBLE(10,2)',
 			'from_iban' => 'VARCHAR(34)',
 			'to_iban' => 'VARCHAR(34)',
@@ -94,7 +95,8 @@
 			'transactions' => array(
 				array(
 					'tid' => 1,
-					'description' => 'TRANSFERENCIA DE LUIS CASABUENA',
+					'from_description' => 'TRANSFERENCIA A MARCOS BJORKELUND',
+					'to_description' => 'TRANSFERENCIA DE LUIS CASABUENA',
 					'quantity' => 53.25,
 					'from_iban' => 'ES8023100001180000054321',
 					'to_iban' => 'ES8023100001180000012345',
@@ -102,7 +104,8 @@
 					'status' => 'ok'),
 				array(
 					'tid' => 2,
-					'description' => 'COMPRA EN MERCADONA',
+					'from_description' => 'COMPRA EN MERCADONA',
+					'to_description' => 'COMPRA DE MARCOS BJORKELUND',
 					'quantity' => 104.5,
 					'from_iban' => 'ES8023100001180000012345',
 					'to_iban' => 'ES8023100001180000099997',
@@ -110,7 +113,8 @@
 					'status' => 'ok'),
 				array(
 					'tid' => 3,
-					'description' => 'COMPRA EN CARREFOUR',
+					'from_description' => 'COMPRA EN CARREFOUR',
+					'to_description' => 'COMPRA DE MARCOS BJORKELUND',
 					'quantity' => 41.34,
 					'from_iban' => 'ES8023100001180000012345',
 					'to_iban' => 'ES8023100001180000099998',
@@ -118,7 +122,8 @@
 					'status' => 'ok'),
 				array(
 					'tid' => 4,
-					'description' => 'PEAJE EN AUTOPISTA AP-4',
+					'from_description' => 'PEAJE EN AUTOPISTA AP-4',
+					'to_description' => 'PEAJE DE MARCOS BJORKELUND',
 					'quantity' => 7.3,
 					'from_iban' => 'ES8023100001180000012345',
 					'to_iban' => 'ES8023100001180000099999',

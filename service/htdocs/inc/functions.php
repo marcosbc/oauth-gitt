@@ -79,12 +79,13 @@
 			foreach($trans as $t) {
 				$t_quantity = format_quantity($t['quantity']);
 				if($user['iban'] == $t['to_iban']) {
+					$t_description = strtoupper($t['to_description']);
 					$t_iban = format_iban($t['from_iban']);
 				} else {
+					$t_description = strtoupper($t['from_description']);
 					$t_iban = format_iban($t['to_iban']);
 					$t_quantity = '-'.$t_quantity;
 				}
-				$t_description = strtoupper($t['description']);
 				$transactions .= "<tr><td class=\"description left\"><strong>$t_description</strong><br/><span>$t_iban</span><td class=\"center\">";
 				$transactions .= "Ayer"; // TODO
 				$transactions .= "</td><td class=\"right\"><strong>$t_quantity</strong></td></tr>";
