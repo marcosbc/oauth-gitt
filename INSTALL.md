@@ -110,7 +110,7 @@ $ /opt/bitnami/use_lampstack
 $ php /opt/bitnami/hosted/oauth-gitt/scripts/service-install.php
 ```
 
-** Nota importante:** Se ha supuesto que la contraseña por defecto de la aplicación es `bitnami1`. Si no es el caso, cree una rama (denominada, por ejemplo, `deployed`) con los cambios necesarios en el script `service-install.php` (es decir, cambie `bitnami1` por su contraseña).
+**Nota importante:** Se ha supuesto que la contraseña por defecto de la aplicación es `bitnami1`. Si no es el caso, cree una rama (denominada, por ejemplo, `deployed`) con los cambios necesarios en el script `service-install.php` (es decir, cambie `bitnami1` por su contraseña).
 Una vez instalados los datos de ejemplo puede volver a la rama `master`, ya que no se volverá a usar.
 
 ### Eliminar la base de datos con los datos de ejemplo
