@@ -100,7 +100,7 @@
 	}
 
 	function generate_alert($msg) {
-		return "<div id=\"alert\"><strong>Alert:</strong> $msg</div>";
+		return "<div id=\"alert\"><strong>Aviso:</strong> $msg</div>";
 	}
 
 	function hash_password($salt, $pass) {
