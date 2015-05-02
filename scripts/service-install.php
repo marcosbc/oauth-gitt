@@ -183,12 +183,6 @@
 		$query = "DROP DATABASE `$newdb`;\n";
 		$query .= "DROP USER `$newuser`@`$host`;\n";
 		$query .= "FLUSH PRIVILEGES;\n";
-
-		// we will start dropping data now
-		$query .= "USE `$newdb`;\n";
-		foreach($structure as $key => $val) {
-			$query .= "DROP TABLE $key;\n";
-		}
 	}
 
 	echo "\nQuery to execute: \"$query\"\n";
