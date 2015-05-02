@@ -100,3 +100,27 @@ $ sudo sh -c "echo '127.0.0.1 oauthg10.tk\n127.0.0.1 www.oauthg10.tk\n127.0.0.1 
 ```
 
 Entonces, deberíamos poder acceder a http://oauthg10.tk/, http://client.oauthg10.tk/ y http://service.oauthg10.tk/ desde nuestro navegador.
+
+## Instalar la base de datos con datos de ejemplo
+
+Para instalar la base de datos, basta con ejecutar lo siguiente:
+
+```
+$ /opt/bitnami/use_lampstack
+$ php /opt/bitnami/hosted/oauth-gitt/scripts/service-install.php
+```
+
+** Nota importante:** Se ha supuesto que la contraseña por defecto de la aplicación es `bitnami1`. Si no es el caso, cree una rama (denominada, por ejemplo, `deployed`) con los cambios necesarios en el script `service-install.php` (es decir, cambie `bitnami1` por su contraseña).
+Una vez instalados los datos de ejemplo puede volver a la rama `master`, ya que no se volverá a usar.
+
+### Eliminar la base de datos con los datos de ejemplo
+
+Quizás quieras actualizar los datos de ejemplo o eliminar cualquier rastro dejado por este proyecto.
+Realizar esto es bastante sencillo:
+
+```
+$ /opt/bitnami/use_lampstack
+$ php /opt/bitnami/hosted/oauth-gitt/scripts/service-install.php remove
+```
+
+
