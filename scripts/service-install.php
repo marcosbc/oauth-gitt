@@ -25,7 +25,9 @@
 			'lastname' => 'VARCHAR(40)',
 			'dni' => 'VARCHAR(10)',
 			'iban' => 'VARCHAR(34)', // *** should be unique ***
-			'balance' => 'DOUBLE(8,2)'),
+			'balance' => 'DOUBLE(8,2)',
+			'hash' => 'VARCHAR(42)',
+			'salt' => 'VARCHAR(42)'),
 		'transactions' => array(
 			// the first one is the PRIMARY KEY
 			'tid' => 'INT UNSIGNED NOT NULL',
@@ -73,6 +75,8 @@
 					'dni' => 'A1234567Z',
 					'iban' => 'ES8023100001180000012345',
 					'balance' => '1023.5',
+					'hash' => '2635aabf5cd5e3f05ecf674a02954cfafea432ee', //soymarcos
+					'salt' => '12j46ix0sudiw3m2wskqw9992sk',
 				),
 				array(
 					'uid' => 2,
@@ -83,6 +87,8 @@
 					'dni' => 'Z98765432A',
 					'iban' => 'ES8023100001180000054321',
 					'balance' => '322.75',
+					'hash' => 'f81c48d2b6c83a9ae9b50ef5792446c3f339a1ba',//soyluis
+					'salt' => 'sk4j2kewods0ejow0d83j33n2s0',
 				),
 			),
 			'transactions' => array(
@@ -97,7 +103,7 @@
 				array(
 					'tid' => 2,
 					'description' => 'COMPRA EN MERCADONA',
-					'quantity' => -104.5,
+					'quantity' => 104.5,
 					'from_iban' => 'ES8023100001180000012345',
 					'to_iban' => 'ES8023100001180000099997',
 					'date' => time(),
@@ -105,7 +111,7 @@
 				array(
 					'tid' => 3,
 					'description' => 'COMPRA EN CARREFOUR',
-					'quantity' => -41.34,
+					'quantity' => 41.34,
 					'from_iban' => 'ES8023100001180000012345',
 					'to_iban' => 'ES8023100001180000099998',
 					'date' => time(),
@@ -113,7 +119,7 @@
 				array(
 					'tid' => 4,
 					'description' => 'PEAJE EN AUTOPISTA AP-4',
-					'quantity' => -7.3,
+					'quantity' => 7.3,
 					'from_iban' => 'ES8023100001180000012345',
 					'to_iban' => 'ES8023100001180000099999',
 					'date' => time(),
