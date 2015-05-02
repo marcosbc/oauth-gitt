@@ -82,13 +82,22 @@ main > section > table tr td strong {
 	font-weight: normal;
 }
 
-#error {
+#error,
+#warning {
 	height: 40px;
 	font-size: 16px;
-	color: #FFA998;
-	background: #A00000;
 	text-align: center;
 	line-height: 40px;
+}
+
+#error {
+	background: #A00000;
+	color: #FFA998;
+}
+
+#warning {
+	background: #FFF757;
+	color: #928500;
 }
 
 /* LOGIN PAGE */

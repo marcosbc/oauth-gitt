@@ -6,6 +6,7 @@
 	$db = new PDO('mysql:host=localhost;dbname=oauth', 'oauth', 'oauth');
 	$user = array();
 	$errormsg = "";
+	$alertmsg = "";
 	global $db, $user;
 
 	// logging in...

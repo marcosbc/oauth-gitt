@@ -99,6 +99,10 @@
 		return "<div id=\"error\"><strong>Error:</strong> $msg</div>";
 	}
 
+	function generate_alert($msg) {
+		return "<div id=\"alert\"><strong>Alert:</strong> $msg</div>";
+	}
+
 	function hash_password($salt, $pass) {
 		return sha1(md5($salt).hash('sha256', $pass));
 	}
