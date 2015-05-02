@@ -23,7 +23,9 @@
 			'username' => 'VARCHAR(20)',
 			'name' => 'VARCHAR(20)',
 			'lastname' => 'VARCHAR(40)',
-			'iban' => 'VARCHAR(34)'), // *** should be unique ***
+			'dni' => 'VARCHAR(10)',
+			'iban' => 'VARCHAR(34)', // *** should be unique ***
+			'balance' => 'DOUBLE(8,2)'),
 		'transactions' => array(
 			// the first one is the PRIMARY KEY
 			'tid' => 'INT UNSIGNED NOT NULL',
@@ -68,7 +70,9 @@
 					'username' => 'marcos',
 					'name' => 'Marcos',
 					'lastname' => 'Bjorkelund',
-					'iban' => 'ES8023100001180000012345'
+					'dni' => 'A1234567Z',
+					'iban' => 'ES8023100001180000012345',
+					'balance' => '1023.5',
 				),
 				array(
 					'uid' => 2,
@@ -76,38 +80,40 @@
 					'username' => 'luis',
 					'name' => 'Luis',
 					'lastname' => 'Casabuena',
-					'iban' => 'ES8023100001180000054321'
+					'dni' => 'Z98765432A',
+					'iban' => 'ES8023100001180000054321',
+					'balance' => '322.75',
 				),
 			),
 			'transactions' => array(
 				array(
 					'tid' => 1,
-					'description' => 'TRANSFER to LUIS CASABUENA',
-					'quantity' => 504.25,
-					'from_iban' => 'ES8023100001180000012345',
-					'to_iban' => 'ES8023100001180000054321',
+					'description' => 'TRANSFERENCIA DE LUIS CASABUENA',
+					'quantity' => 53.25,
+					'from_iban' => 'ES8023100001180000054321',
+					'to_iban' => 'ES8023100001180000012345',
 					'date' => time(),
 					'status' => 'ok'),
 				array(
 					'tid' => 2,
-					'description' => 'PURCHASE at MERCADONA',
+					'description' => 'COMPRA EN MERCADONA',
 					'quantity' => -104.5,
+					'from_iban' => 'ES8023100001180000012345',
+					'to_iban' => 'ES8023100001180000099997',
+					'date' => time(),
+					'status' => 'ok'),
+				array(
+					'tid' => 3,
+					'description' => 'COMPRA EN CARREFOUR',
+					'quantity' => -41.34,
 					'from_iban' => 'ES8023100001180000012345',
 					'to_iban' => 'ES8023100001180000099998',
 					'date' => time(),
 					'status' => 'ok'),
 				array(
-					'tid' => 3,
-					'description' => 'PURCHASE at CARREFOUR',
-					'quantity' => 41.34,
-					'from_iban' => 'ES8023100001180000012345',
-					'to_iban' => 'ES8023100001180000099999',
-					'date' => time(),
-					'status' => 'ok'),
-				array(
 					'tid' => 4,
-					'description' => 'TOLL at AUTOPISTA AP-4',
-					'quantity' => 41.34,
+					'description' => 'PEAJE EN AUTOPISTA AP-4',
+					'quantity' => -7.3,
 					'from_iban' => 'ES8023100001180000012345',
 					'to_iban' => 'ES8023100001180000099999',
 					'date' => time(),
