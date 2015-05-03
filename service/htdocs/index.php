@@ -3,11 +3,12 @@
 	require_once('inc/functions.php');
 
 	// initialize db and variables
+	$title = "Urbank";
 	$db = new PDO('mysql:host=localhost;dbname=oauth', 'oauth', 'oauth');
 	$user = array();
 	$errormsg = "";
 	$alertmsg = "";
-	$title = "Urbank";
+	$logo = $title;
 	global $db, $user;
 
 	// logging in...
