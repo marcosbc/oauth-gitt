@@ -4,7 +4,11 @@
 
 	// initialize db and variables
 	$title = "Urbank";
-	$db = new PDO('mysql:host=localhost;dbname=oauth', 'oauth', 'oauth');
+	try{
+		$db = new PDO('mysql:host=localhost;dbname=oauth', 'oauth', 'oauth');
+	} catch(Exception $e) {
+		die($e->getMessage());
+	}
 	$user = array();
 	$errormsg = "";
 	$alertmsg = "";
