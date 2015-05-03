@@ -36,6 +36,7 @@ main > header > h1 {
 	text-shadow: 1px 4px 6px #FFB00B, 0 0 0 #000, 1px 4px 6px #FFB00B;
 	margin: 30px 0;
 	padding: 0;
+	text-transform: uppercase;
 }
 
 main > section {

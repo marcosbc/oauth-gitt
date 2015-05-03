@@ -1,35 +1,26 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Urbank</title>
-		<link rel="stylesheet" type="text/css" href="styles.css"/>
-	</head>
-	<body>
-		{$errormsg}
-		{$alertmsg}
-		<main id="content">
-			<header id="logo">
-				<h1>URBANK</h1>
-			</header>
-			<section id="login">
-				<header>
-					<h2>Zona de clientes</h2>
-				</header>
-				<form action="index.php" method="post">
-					<fieldset>
-						<p>
-							<input type="text" id="dni" name="dni" placeholder="DNI" required/> 
-						</p>
-						<p>
-							<input type="password" id="pass" name="pass" placeholder="contrase&ntilde;a" required/>
-						</p>
-						<p class="submit">
-							<input type="hidden" name="action" value="login" />
-							<input type="submit" />
-						</p>
-					</fieldset>
-				</form>
-			</section>
-		</main>
-	</body>
-</html>
+{$header}
+<main id="content">
+	<header id="logo">
+		<h1>{$title}</h1>
+	</header>
+	<section id="login">
+		<header>
+			<h2>Zona de clientes</h2>
+		</header>
+		<form action="index.php" method="post">
+			<fieldset>
+				<p>
+					<input type="text" id="dni" name="dni" placeholder="DNI" required/> 
+				</p>
+				<p>
+					<input type="password" id="pass" name="pass" placeholder="contrase&ntilde;a" required/>
+				</p>
+				<p class="submit">
+					<input type="hidden" name="action" value="login" />
+					<input type="submit" />
+				</p>
+			</fieldset>
+		</form>
+	</section>
+</main>
+{$footer}

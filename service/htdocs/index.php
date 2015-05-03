@@ -7,6 +7,7 @@
 	$user = array();
 	$errormsg = "";
 	$alertmsg = "";
+	$title = "Urbank";
 	global $db, $user;
 
 	// logging in...
@@ -29,6 +30,7 @@
 		$viewfile = 'login';
 	}
 	else {
+		$title = "Tu $title";
 		// get the user data
 		foreach($_SESSION as $key => $val) {
 			$user[$key] = $val;
@@ -43,7 +45,10 @@
 	}
 
 	// parse the view and show
-	$file = file_get_contents("views/$viewfile.html");
-	$file = str_replace(array('\\', '"'), array('\\\\', '\\"'), $file);
+	$header = parse_template("header");
+	eval("\$header = \"$header\";");
+	$footer = parse_template("footer");
+	eval("\$footer = \"$footer\";");
+	$file = parse_template($viewfile);
 	eval("\$file = \"$file\";");
 	echo $file;

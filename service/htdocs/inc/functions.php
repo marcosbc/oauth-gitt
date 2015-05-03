@@ -124,3 +124,8 @@
 
 		return $iban;
 	}
+
+	function parse_template($name) {
+		$file = file_get_contents("views/$name.html");
+		return str_replace(array('\\', '"'), array('\\\\', '\\"'), $file);
+	}

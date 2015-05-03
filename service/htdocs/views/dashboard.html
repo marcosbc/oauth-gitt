@@ -1,40 +1,31 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Tu Cuenta Urbank</title>
-		<link rel="stylesheet" type="text/css" href="styles.css"/>
-	</head>
-	<body>
-		{$errormsg}
-		{$alertmsg}
-		<main id="content">
-			<header id="logo">
-				<h1>URBANK</h1>
-				<p id="logout">
-					<a href="index.php?action=logout">Cerrar sesi&oacute;n</a>
-				</p>
-			</header>
-			<section id="user" class="material">
-				<header>
-					<h2>Tu cuenta</h2>
-				</header>
-				<section>
-					<p id="balance"><strong>${balance}</strong></p>
-					<p id="name">${name}</p>
-					<p id="iban">${iban}</p>
-				</section>
-			</section>
+{$header}
+<main id="content">
+	<header id="logo">
+		<h1>{$title}</h1>
+		<p id="logout">
+			<a href="index.php?action=logout">Cerrar sesi&oacute;n</a>
+		</p>
+	</header>
+	<section id="user" class="material">
+		<header>
+			<h2>Tu cuenta</h2>
+		</header>
+		<section>
+			<p id="balance"><strong>${balance}</strong></p>
+			<p id="name">${name}</p>
+			<p id="iban">${iban}</p>
+		</section>
+	</section>
 
-			<section id="transactions" class="material">
-				<header>
-					<h2>&Uacute;ltimas transferencias</h2>
-				</header>
-				<table>
-					<tbody>
-						{$transactions}
-					</tbody>
-				</table>
-			</section>
-		</main>
-	</body>
-</html>
+	<section id="transactions" class="material">
+		<header>
+			<h2>&Uacute;ltimas transferencias</h2>
+		</header>
+		<table>
+			<tbody>
+				{$transactions}
+			</tbody>
+		</table>
+	</section>
+</main>
+{$footer}
