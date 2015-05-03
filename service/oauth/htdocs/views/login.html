@@ -1,0 +1,29 @@
+{$header}
+<main id="content">
+	<header id="logo">
+		<h1>{$logo}</h1>
+	</header>
+	<section id="login">
+		<header>
+			<h2>Vincular aplicaci&oacute;n<br><em>{$app['name']}</em></h2>
+			<p>
+				La aplicaci&oacute;n <strong>{$app['name']}</strong> desea obtener los siguientes datos de su cuenta:
+				<br/>
+				&iquest;Permitir el acceso a esta aplicaci&oacute;n?
+			</p>
+			{$userinfo}
+			<!-- TODO -->
+		</header>
+		<form action="/authorize?client_id={$_GET['client_id']}&amp;redirect_uri={$_GET['redirect_uri']}&amp;response_type={$_GET['response_type']}" method="post">
+			<fieldset>
+				{$loginform}
+				<p class="authorize">
+					<input type="hidden" name="action" value="login" />
+					<input type="submit" name="authorize" value="Autorizar" />
+					<input type="submit" name="authorize" value="Cancelar" />
+				</p>
+			</fieldset>
+		</form>
+	</section>
+</main>
+{$footer}

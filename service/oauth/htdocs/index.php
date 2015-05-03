@@ -1,6 +1,24 @@
 <?php
+	session_start();
 	require_once __DIR__.'/vendor/autoload.php';
 	use Illuminate\Database\Capsule\Manager as Capsule;
+
+    function parse_template($name) {
+        $file = file_get_contents("views/$name.html");
+        return str_replace(array('\\', '"'), array('\\\\', '\\"'), $file);
+    }
+
+	function verify_login($dni, $pass) {
+		$user = Capsule::table('users')->where('dni', '=', $dni)->first();
+		if($user != null) {
+			return $user['hash'] == hash_password($user['salt'], $pass);
+		}
+		return false;
+	}
+
+    function hash_password($salt, $pass) {
+        return sha1(md5($salt).hash('sha256', $pass));
+    }
 
 	// set up the capsule
 	$capsule = new Capsule;
@@ -53,8 +71,12 @@
 	$request = (new Request())->createFromGlobals();
 	$router = new \League\Route\RouteCollection();
 
-	// set up routes
-	$router->get('/authorize', function (Request $request) use ($server) {
+	/*
+	 * set up routes
+	 */
+
+	// step 1: get auth code (and login) <- from user to server
+	$router->get('/oauth', function (Request $request) use ($server) {
 		try {
 			$authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
 		} catch(\Exception $e) {
@@ -67,15 +89,141 @@
 				$e->getHttpHeaders()
 			);
 		}
-		$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
 
-		$response = new Response(null, 303, array(
-			'Location' => $redirectUri
+		// login page
+		return new Response('', 302, array(
+			'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
 		));
+	});
 
+	$router->get('/authorize', function(Request $request) use ($server) {
+		try {
+			$authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
+		} catch(\Exception $e) {
+			return new Response(
+				json_encode(array(
+					'error' => $e->errorType,
+					'message' => $e->getMessage(),
+				)),
+				$e->httpStatusCode,
+				$e->getHttpHeaders()
+			);
+		}
+
+		$title = "Vincular app con Urbank";
+		$logo = "Urbank";
+		$header = parse_template('header');
+		eval("\$header = \"$header\";");
+		$footer = parse_template('footer');
+		eval("\$footer = \"$footer\";");
+
+		$loginform = "";
+		$userinfo = "";
+		// the table must exist for the code to come to this point
+		$app = Capsule::table('oauth_clients')->where('id', '=', $_GET['client_id'])->first();
+
+		// to improve
+		if(!isset($_SESSION['uid'])) {
+			$loginform = parse_template('loginform');
+			eval("\$loginform = \"$loginform\";");
+		} else {
+			$user = Capsule::table('users')->where('uid', '=', $_SESSION['uid'])->first();
+			$name_formatted = strtoupper("{$user['name']} {$user['lastname']}");
+			$userinfo = parse_template('userinfo');
+			eval("\$userinfo = \"$userinfo\";");
+		}
+
+		$view = parse_template('login');
+		eval("\$view = \"$view\";");
+
+		$response = new Response($view, 200, array(
+			'Content-type' => 'text/html'
+		));
 		return $response;
 	});
 
+	$router->post('/authorize', function(Request $request) use ($server) {
+		try {
+			$authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
+		} catch(\Exception $e) {
+			return new Response(
+				json_encode(array(
+					'error' => $e->errorType,
+					'message' => $e->getMessage(),
+				)),
+				$e->httpStatusCode,
+				$e->getHttpHeaders()
+			);
+		}
+
+		// if authorize isn't set, redirect to login
+		if(!isset($_POST['authorize'])) {
+			$response = new Response(null, 302, array(
+				'Location' => '/authorize'
+			));
+		}
+
+		// The user denied the request so redirect back with a message
+		elseif($_POST['authorize'] !== 'Autorizar') {
+			$error = new \League\OAuth2\Server\Exception\AccessDeniedException;
+			$redirectUriClass = new \League\OAuth2\Server\Util\RedirectUri;
+			$redirectUri = $redirectUriClass->make(
+				$authParams['redirect_uri'],
+				array(
+					'error' => $error->errorType,
+					'message' => $error->getMessage()
+				)
+			);
+			$response = new Response('', 302, array(
+				'Location' => $redirectUri
+			));
+		}
+
+		// The user accepted
+		else {
+			if(!isset($_SESSION['uid'])) {
+				// verify login
+				if(verify_login($_POST['dni'], $_POST['pass'])) {
+					$user = Capsule::table('users')->where('dni', '=', $_POST['dni'])->first();
+
+					// set the session
+					$_SESSION = array();
+					$_SESSION['uid'] = $user['uid'];
+
+					// if login ok, redirect to redirect-uri
+					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
+
+					$response = new Response(null, 302, array(
+						'Location' => $redirectUri
+					));
+				} else {
+					// if login not ok, redirect to login form again
+					return new Response(null, 302, array(
+						'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
+					));
+				}
+			} else {
+				$user = Capsule::table('users')->where('uid', '=', $_SESSION['uid'])->first();
+				if($user == null) {
+					return new Response(null, 302, array(
+						'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
+					));
+				} else {
+					// if login ok, redirect to redirect-uri
+					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
+					$response = new Response(null, 302, array(
+						'Location' => $redirectUri
+					));
+				}
+			}
+		}
+
+		$response->headers->set('Content-type', 'application/json');
+		return $response;
+	});
+
+	// step 2: from auth code, get token <- from client to server
+	// TODO: NOT WORKING (tip: replace "->request->" by "->"
 	$router->post('/access_token', function(Request $request) use ($server) {
 		try {
 			$response = $server->issueAccessToken();
@@ -91,6 +239,8 @@
 				$e->getHttpHeaders()
 			);
 		}
+		$response->headers->set('Content-type', 'application/json');
+		return $response;
 	});
 
 	// show the application, and error page if error
@@ -103,13 +253,14 @@
 			'error' => 404,
 			'message' => $e->getMessage(),
 		)), 404);
+		$response->headers->set('Content-type', 'application/json');
 	} catch(\Exception $e) {
 		$response = new Response(json_encode(array(
 			'status_code' => 500,
 			'message' => $e->getMessage(),
 		)), 500);
+		$response->headers->set('Content-type', 'application/json');
 	}
 
-	$response->headers->set('Content-type', 'application/json');
 	$response->send();
 	

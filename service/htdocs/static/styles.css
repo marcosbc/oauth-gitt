@@ -113,11 +113,12 @@ main > section#login {
 }
 
 main > section#login > header {
-	color: #FFB00B;
+	color: #CD831F;
 	text-align: center;
 }
 
 main > section#login > header > h2 {
+	color: #FFB00B;
 	font-size: 20px;
 	margin: 0 auto 3px;
 	padding: 0;
@@ -139,7 +140,7 @@ main > section#login input[type="password"] {
 	margin: 0 auto;
 	padding: 0 14px 0 10px;
 	height: 40px;
-	width: 216px;
+	width: 226px;
 	font-size: 16px;
 	color: #959595;
 	border-radius: 4px;
@@ -151,6 +152,24 @@ main > section#login p.submit input {
 	padding: 0;
 	height: 0;
 	width: 0;
+}
+
+main > section#login p.authorize input {
+	margin: 0;
+	padding: 0;
+	background: #0091BA;
+	border: none;
+	color: #FFF;
+	display: inline-block;
+	width: 115px;
+	line-height: 40px;
+	font-size: 16px;
+	border-radius: 4px;
+}
+
+main > section#login p.authorize input:last-child {
+	float: right;
+	background: #ADADAD;
 }
 
 main > section#login p.submit input {
