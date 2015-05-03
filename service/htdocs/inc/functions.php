@@ -12,7 +12,7 @@
 
 		if($sentence->execute(array($idval))) {
 			$user = $sentence->fetch();
-			return $user['hash'] == hash_password($user['salt'], $pass);
+			return $user['secret'] == hash_password($user['salt'], $pass);
 		}
 		return false;
 	}
