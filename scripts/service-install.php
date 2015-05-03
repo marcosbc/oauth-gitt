@@ -26,7 +26,7 @@
 			'dni' => 'VARCHAR(10)',
 			'iban' => 'VARCHAR(34)', // *** should be unique ***
 			'balance' => 'DOUBLE(8,2)',
-			'secret' => 'VARCHAR(42)',
+			'hash' => 'VARCHAR(42)',
 			'salt' => 'VARCHAR(42)'
 		),
 		'transactions' => array(
@@ -42,20 +42,58 @@
 		),
 		'oauth_clients' => array(
 			// the first one is the PRIMARY KEY
-			'id' => 'INT UNSIGNED NOT NULL',
+			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
 			'name' => 'VARCHAR(20)',
-			'publickey' => 'VARCHAR(100)',
-			'privatekey' => 'VARCHAR(100)',
-			'permission_access_account' => 'BIT(1) DEFAULT 1',
-			'permission_modify_account' => 'BIT(1) DEFAULT 0',
-			'permission_read_transaction' => 'BIT(1) DEFAULT 1',
-			'permission_create_transaction' => 'BIT(1) DEFAULT 0',
-			'permission_read_credentials' => 'BIT(1) DEFAULT 0',
-			'redirect_uri' => 'VARCHAR(200)',
+			'public' => 'VARCHAR(100)',
+			'secret' => 'VARCHAR(100)',
+			'redirect_uri' => 'VARCHAR(100)',
 		),
-		'permissions' => array(
-			'pid' => 'VARCHAR(40)',
-			'description' => 'VARCHAR(60)'
+		'oauth_client_redirect_uris' => array(
+			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
+			'client_id' => 'VARCHAR(20)',
+			'redirect_uri' => 'VARCHAR(100)',
+		),
+		'oauth_scopes' => array(
+			'id' => 'VARCHAR(40)',
+			'description' => 'VARCHAR(80)',
+		),
+		'oauth_sessions' => array(
+			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
+			'owner_type' => "ENUM('user', 'client')",
+			'owner_id' => 'VARCHAR(10)',
+			'client_id' => 'VARCHAR(10)',
+			'client_redirect_uri' => 'VARCHAR(200)',
+		),
+		'oauth_access_tokens' => array(
+			'access_token' => 'VARCHAR(20)',
+			'session_id' => 'INT UNSIGNED NOT NULL',
+			'expire_time' => 'INT UNSIGNED',
+		),
+		'oauth_refresh_tokens' => array(
+			'refresh_token' => 'VARCHAR(20)',
+			'access_token' => 'VARCHAR(20)',
+			'expire_time' => 'INT UNSIGNED',
+		),
+		'oauth_auth_codes' => array(
+			'auth_code' => 'VARCHAR(100)',
+			'session_id' => 'INT UNSIGNED NOT NULL',
+			'expire_time' => 'INT UNSIGNED',
+			'client_redirect_uri' => 'VARCHAR(100)',
+		),
+		'oauth_access_token_scopes' => array(
+			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
+			'access_token' => 'VARCHAR(20)',
+			'scope' => 'VARCHAR(40)',
+		),
+		'oauth_auth_code_scopes' => array(
+			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
+            'auth_code' => 'VARCHAR(20)',
+            'scope' => 'VARCHAR(40)',
+		),
+		'oauth_session_scopes' => array(
+			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
+			'scope' => 'INT UNSIGNED NOT NULL', //same as id above
+			'session_id' => 'INT UNSIGNED NOT NULL',
 		),
 	);
 
@@ -81,7 +119,7 @@
 					'dni' => 'A1234567Z',
 					'iban' => 'ES8023100001180000012345',
 					'balance' => '1023.5',
-					'secret' => '2635aabf5cd5e3f05ecf674a02954cfafea432ee', //soymarcos
+					'hash' => '2635aabf5cd5e3f05ecf674a02954cfafea432ee', //soymarcos
 					'salt' => '12j46ix0sudiw3m2wskqw9992sk',
 				),
 				array(
@@ -93,7 +131,7 @@
 					'dni' => 'Z98765432A',
 					'iban' => 'ES8023100001180000054321',
 					'balance' => '322.75',
-					'secret' => 'f81c48d2b6c83a9ae9b50ef5792446c3f339a1ba',//soyluis
+					'hash' => 'f81c48d2b6c83a9ae9b50ef5792446c3f339a1ba',//soyluis
 					'salt' => 'sk4j2kewods0ejow0d83j33n2s0',
 				),
 			),
@@ -135,37 +173,31 @@
 					'date' => time(),
 					'status' => 'ok'),
 			),
-			'permissions' => array(
+			'oauth_scopes' => array(
 				array(
-					'pid' => 'permission_access_account',
+					'id' => 'permission_access_account',
 					'description' => 'Read your account information'),
 				array(
-					'pid' => 'permission_modify_account',
+					'id' => 'permission_modify_account',
 					'description' => 'Modify your account information'),
 				array(
-					'pid' => 'permission_read_transaction',
+					'id' => 'permission_read_transaction',
 					'description' => 'Read transactions information'),
 				array(
-					'pid' => 'permission_create_transaction',
+					'id' => 'permission_create_transaction',
 					'description' => 'Create a new transaction'),
 				array(
-					'pid' => 'permission_read_credentials',
+					'id' => 'permission_read_credentials',
 					'description' => 'Read your passwords'),
 			),
 			'oauth_clients' => array(
 				array(
-					'id' => '1',
 					'name' => 'oauth-gitt',
-					'publickey' => '123456789abcdefghijklmnopqrstuvwxyz',
-					'privatekey' => 'zyxwvutsrqponmlkjihgfedcba987654321',
-					'permission_access_account' => '1',
-					'permission_modify_account' => '0',
-					'permission_read_transaction' => '1',
-					'permission_create_transaction' => '0',
-					'permission_read_credentials' => '0',
+					'public' => '123456789abcdefghijklmnopqrstuvwxyz',
+					'secret' => 'zyxwvutsrqponmlkjihgfedcba987654321',
 					'redirect_uri' => 'http://google.com',
 				),
-			)
+			),
 		);
 
 		foreach($structure as $table => $cols) {
