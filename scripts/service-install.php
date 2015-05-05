@@ -43,35 +43,35 @@
 		'oauth_clients' => array(
 			// the first one is the PRIMARY KEY
 			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
-			'name' => 'VARCHAR(20)',
+			'name' => 'VARCHAR(100)',
 			'public' => 'VARCHAR(100)',
 			'secret' => 'VARCHAR(100)',
 			'redirect_uri' => 'VARCHAR(100)',
 		),
 		'oauth_client_redirect_uris' => array(
 			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
-			'client_id' => 'VARCHAR(20)',
+			'client_id' => 'VARCHAR(100)',
 			'redirect_uri' => 'VARCHAR(100)',
 		),
 		'oauth_scopes' => array(
-			'id' => 'VARCHAR(40)',
-			'description' => 'VARCHAR(80)',
+			'id' => 'VARCHAR(100)',
+			'description' => 'VARCHAR(100)',
 		),
 		'oauth_sessions' => array(
 			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
 			'owner_type' => "ENUM('user', 'client')",
-			'owner_id' => 'VARCHAR(10)',
-			'client_id' => 'VARCHAR(10)',
+			'owner_id' => 'VARCHAR(100)',
+			'client_id' => 'VARCHAR(100)',
 			'client_redirect_uri' => 'VARCHAR(200)',
 		),
 		'oauth_access_tokens' => array(
-			'access_token' => 'VARCHAR(20)',
+			'access_token' => 'VARCHAR(100)',
 			'session_id' => 'INT UNSIGNED NOT NULL',
 			'expire_time' => 'INT UNSIGNED',
 		),
 		'oauth_refresh_tokens' => array(
-			'refresh_token' => 'VARCHAR(20)',
-			'access_token' => 'VARCHAR(20)',
+			'refresh_token' => 'VARCHAR(100)',
+			'access_token' => 'VARCHAR(100)',
 			'expire_time' => 'INT UNSIGNED',
 		),
 		'oauth_auth_codes' => array(
@@ -82,13 +82,13 @@
 		),
 		'oauth_access_token_scopes' => array(
 			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
-			'access_token' => 'VARCHAR(20)',
-			'scope' => 'VARCHAR(40)',
+			'access_token' => 'VARCHAR(100)',
+			'scope' => 'VARCHAR(100)',
 		),
 		'oauth_auth_code_scopes' => array(
 			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',
-            'auth_code' => 'VARCHAR(20)',
-            'scope' => 'VARCHAR(40)',
+            'auth_code' => 'VARCHAR(100)',
+            'scope' => 'VARCHAR(100)',
 		),
 		'oauth_session_scopes' => array(
 			'id' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT',

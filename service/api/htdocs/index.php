@@ -3,23 +3,6 @@
 	require_once __DIR__.'/vendor/autoload.php';
 	use Illuminate\Database\Capsule\Manager as Capsule;
 
-    function parse_template($name) {
-        $file = file_get_contents("views/$name.html");
-        return str_replace(array('\\', '"'), array('\\\\', '\\"'), $file);
-    }
-
-	function verify_login($dni, $pass) {
-		$user = Capsule::table('users')->where('dni', '=', $dni)->first();
-		if($user != null) {
-			return $user['hash'] == hash_password($user['salt'], $pass);
-		}
-		return false;
-	}
-
-    function hash_password($salt, $pass) {
-        return sha1(md5($salt).hash('sha256', $pass));
-    }
-
 	// set up the capsule
 	$capsule = new Capsule;
 	$capsule->addConnection([
@@ -53,16 +36,12 @@
 		include "$path$class.php";
 	}
 
-	$server = new \League\OAuth2\Server\AuthorizationServer;
-	$server->setSessionStorage(new Storage\SessionStorage);
-	$server->setAccessTokenStorage(new Storage\AccessTokenStorage);
-	$server->setClientStorage(new Storage\ClientStorage);
-	$server->setScopeStorage(new Storage\ScopeStorage);
-	$server->setAuthCodeStorage(new Storage\AuthCodeStorage);
-	$authCodeGrant = new \League\OAuth2\Server\Grant\AuthCodeGrant();
-	$server->addGrantType($authCodeGrant);
-	$refreshTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
-	$server->addGrantType($refreshTokenGrant);
+	$server = new \League\OAuth2\Server\ResourceServer(
+		new Storage\SessionStorage(),
+		new Storage\AccessTokenStorage(),
+		new Storage\ClientStorage(),
+		new Storage\ScopeStorage()
+	);
 
 	use Symfony\Component\HttpFoundation\Request;
 	use Symfony\Component\HttpFoundation\Response;
@@ -72,195 +51,117 @@
 	$router = new \League\Route\RouteCollection();
 
 	/*
+	 * Functions
+	 */
+
+	function get_user($uid) {
+		return Capsule::table('users')
+					->select(Capsule::raw('uid, username, name, lastname, dni, iban, balance'))
+					->where('uid', '=', $uid)->first();
+	}
+
+	function get_transactions($uid, $tid = false) {
+		$escaped_uid = addslashes($uid);
+		$res = Capsule::table('transactions')
+					->select(Capsule::raw('transactions.*'))
+					// ensure we are querying a user who we have permission to view, not everyone's query
+					->leftJoin(Capsule::raw('users u1'), 'u1.iban', '=', 'to_iban')
+					->leftJoin(Capsule::raw('users u2'), 'u2.iban', '=', 'from_iban')
+					->where(function($query) use ($uid) {
+						$query->where('u1.uid', '=', $uid)
+						      ->orWhere('u2.uid', '=', $uid);
+					});
+
+		if($tid)
+			$res = $res->where('tid', '=', $tid)->first();
+		else
+			$res = $res->get();
+
+		if($res == null)
+			$res = array();
+
+		return $res;
+	}
+
+	/*
 	 * set up routes
 	 */
 
-	// step 1: get auth code (and login) <- from user to server
-	$router->get('/oauth', function (Request $request) use ($server) {
-		try {
-			$authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
-		} catch(\Exception $e) {
-			return new Response(
-				json_encode(array(
-					'error' => $e->errorType,
-					'message' => $e->getMessage(),
-				)),
-				$e->httpStatusCode,
-				$e->getHttpHeaders()
-			);
-		}
+	// get token information data
+	$router->get('/tokeninfo', function(Request $request) use ($server) {
+		$accessToken = $server->getAccessToken();
+		$session = $server->getSessionStorage()->getByAccessToken($accessToken);
+		$token = array(
+			'owner_id' => $session->getOwnerId(),
+			'owner_type' => $session->getOwnerType(),
+			'access_token' => $accessToken,
+			'client_id' => $session->getClient()->getId(),
+			'scopes' => $accessToken->getScopes()
+		);
 
-		// login page
-		return new Response('', 302, array(
-			'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
-		));
+		return new Response(json_encode($token));
 	});
 
-	$router->get('/authorize', function(Request $request) use ($server) {
-		try {
-			$authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
-		} catch(\Exception $e) {
-			return new Response(
-				json_encode(array(
-					'error' => $e->errorType,
-					'message' => $e->getMessage(),
-				)),
-				$e->httpStatusCode,
-				$e->getHttpHeaders()
-			);
-		}
+	// get list of transactions
+	$router->get('/transaction', function(Request $request, Response $response) use ($server) {
+		$accessToken = $server->getAccessToken();
+		$session = $server->getSessionStorage()->getByAccessToken($accessToken);
+		$body = get_transactions($session->getOwnerId());
+		$response->setContent(json_encode($body));
+		$response->setStatusCode(200);
+		return $response;
+	});
 
-		$title = "Vincular app con Urbank";
-		$logo = "Urbank";
-		$header = parse_template('header');
-		eval("\$header = \"$header\";");
-		$footer = parse_template('footer');
-		eval("\$footer = \"$footer\";");
-
-		$loginform = "";
-		$userinfo = "";
-		// the table must exist for the code to come to this point
-		$app = Capsule::table('oauth_clients')->where('id', '=', $_GET['client_id'])->first();
-
-		// to improve
-		if(!isset($_SESSION['uid'])) {
-			$loginform = parse_template('loginform');
-			eval("\$loginform = \"$loginform\";");
+	// get a specific transaction
+	$router->get('/transaction/{id:number}', function(Request $request, Response $response, array $args) use ($server) {
+		$accessToken = $server->getAccessToken();
+		$session = $server->getSessionStorage()->getByAccessToken($accessToken);
+		$body = get_transactions($session->getOwnerId(), $args['id']);
+		if(empty($body)) {
+			// not found
+			$response->setStatusCode(404);
 		} else {
-			$user = Capsule::table('users')->where('uid', '=', $_SESSION['uid'])->first();
-			$name_formatted = strtoupper("{$user['name']} {$user['lastname']}");
-			$userinfo = parse_template('userinfo');
-			eval("\$userinfo = \"$userinfo\";");
+			$response->setStatusCode(200);
 		}
-
-		$view = parse_template('login');
-		eval("\$view = \"$view\";");
-
-		$response = new Response($view, 200, array(
-			'Content-type' => 'text/html'
-		));
+		$response->setContent(json_encode($body));
 		return $response;
 	});
 
-	$router->post('/authorize', function(Request $request) use ($server) {
-		try {
-			$authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
-		} catch(\Exception $e) {
-			return new Response(
-				json_encode(array(
-					'error' => $e->errorType,
-					'message' => $e->getMessage(),
-				)),
-				$e->httpStatusCode,
-				$e->getHttpHeaders()
-			);
+	// get information about the current user
+	$router->get('/user', function(Request $request, Response $response, array $args) use ($server) {
+		$accessToken = $server->getAccessToken();
+		$session = $server->getSessionStorage()->getByAccessToken($accessToken);
+		$body = get_user($session->getOwnerId());
+		if(empty($body)) {
+			// not found
+			$response->setStatusCode(404);
+		} else {
+			$response->setStatusCode(200);
 		}
-
-		// if authorize isn't set, redirect to login
-		if(!isset($_POST['authorize'])) {
-			$response = new Response(null, 302, array(
-				'Location' => '/authorize'
-			));
-		}
-
-		// The user denied the request so redirect back with a message
-		elseif($_POST['authorize'] !== 'Autorizar') {
-			$error = new \League\OAuth2\Server\Exception\AccessDeniedException;
-			$redirectUriClass = new \League\OAuth2\Server\Util\RedirectUri;
-			$redirectUri = $redirectUriClass->make(
-				$authParams['redirect_uri'],
-				array(
-					'error' => $error->errorType,
-					'message' => $error->getMessage()
-				)
-			);
-			$response = new Response('', 302, array(
-				'Location' => $redirectUri
-			));
-		}
-
-		// The user accepted
-		else {
-			if(!isset($_SESSION['uid'])) {
-				// verify login
-				if(verify_login($_POST['dni'], $_POST['pass'])) {
-					$user = Capsule::table('users')->where('dni', '=', $_POST['dni'])->first();
-
-					// set the session
-					$_SESSION = array();
-					$_SESSION['uid'] = $user['uid'];
-
-					// if login ok, redirect to redirect-uri
-					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
-
-					$response = new Response(null, 302, array(
-						'Location' => $redirectUri
-					));
-				} else {
-					// if login not ok, redirect to login form again
-					return new Response(null, 302, array(
-						'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
-					));
-				}
-			} else {
-				$user = Capsule::table('users')->where('uid', '=', $_SESSION['uid'])->first();
-				if($user == null) {
-					return new Response(null, 302, array(
-						'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
-					));
-				} else {
-					// if login ok, redirect to redirect-uri
-					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
-					$response = new Response(null, 302, array(
-						'Location' => $redirectUri
-					));
-				}
-			}
-		}
-
-		$response->headers->set('Content-type', 'application/json');
-		return $response;
-	});
-
-	// step 2: from auth code, get token <- from client to server
-	// TODO: NOT WORKING (tip: replace "->request->" by "->"
-	$router->post('/access_token', function(Request $request) use ($server) {
-		try {
-			$response = $server->issueAccessToken();
-			echo "ture";
-			return new Response(json_encode($response), 200);
-		} catch(\Exception $e) {
-			return new Response(
-				json_encode(array(
-					'error' => $e->errorType,
-					'message' => $e->getMessage(),
-				)),
-				$e->httpStatusCode,
-				$e->getHttpHeaders()
-			);
-		}
-		$response->headers->set('Content-type', 'application/json');
+		$response->setContent(json_encode($body));
 		return $response;
 	});
 
 	// show the application, and error page if error
 	try {
+		// is access token present?
+		$server->isValidRequest(false);
+
 		// create the response (from the dispatcher)
 		$dispatcher = $router->getDispatcher();
-		$response = $dispatcher->dispatch($request->getMethod(), $request->getPathInfo());
-	} catch(\League\Route\Http\Exception\NotFoundException $e) {
-		$response = new Response(json_encode(array(
-			'error' => 404,
-			'message' => $e->getMessage(),
-		)), 404);
-		$response->headers->set('Content-type', 'application/json');
+		$response = $dispatcher->dispatch(
+			$request->getMethod(),
+			$request->getPathInfo()
+		);
 	} catch(\Exception $e) {
 		$response = new Response(json_encode(array(
 			'status_code' => 500,
 			'message' => $e->getMessage(),
 		)), 500);
-		$response->headers->set('Content-type', 'application/json');
 	}
 
+	// return response
+	$response->headers->set('Content-type', 'application/json');
 	$response->send();
+
 	

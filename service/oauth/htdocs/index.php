@@ -59,6 +59,7 @@
 	$server->setClientStorage(new Storage\ClientStorage);
 	$server->setScopeStorage(new Storage\ScopeStorage);
 	$server->setAuthCodeStorage(new Storage\AuthCodeStorage);
+	$server->setRefreshTokenStorage(new Storage\RefreshTokenStorage);
 	$authCodeGrant = new \League\OAuth2\Server\Grant\AuthCodeGrant();
 	$server->addGrantType($authCodeGrant);
 	$refreshTokenGrant = new \League\OAuth2\Server\Grant\RefreshTokenGrant();
@@ -142,6 +143,7 @@
 		return $response;
 	});
 
+	// step 2: login and authorize
 	$router->post('/authorize', function(Request $request) use ($server) {
 		try {
 			$authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
@@ -191,7 +193,8 @@
 					$_SESSION['uid'] = $user['uid'];
 
 					// if login ok, redirect to redirect-uri
-					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
+					// note the owner type is user, since we dont store app-specific information
+					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', $user['uid'], $authParams);
 
 					$response = new Response(null, 302, array(
 						'Location' => $redirectUri
@@ -210,10 +213,13 @@
 					));
 				} else {
 					// if login ok, redirect to redirect-uri
-					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', 1, $authParams);
+					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', $user['uid'], $authParams);
 					$response = new Response(null, 302, array(
-						'Location' => $redirectUri
+						/*'Location' => $redirectUri*/
 					));
+
+					// TODO: update
+					echo "$redirectUri";
 				}
 			}
 		}
@@ -223,11 +229,9 @@
 	});
 
 	// step 2: from auth code, get token <- from client to server
-	// TODO: NOT WORKING (tip: replace "->request->" by "->"
 	$router->post('/access_token', function(Request $request) use ($server) {
 		try {
 			$response = $server->issueAccessToken();
-			echo "ture";
 			return new Response(json_encode($response), 200);
 		} catch(\Exception $e) {
 			return new Response(
