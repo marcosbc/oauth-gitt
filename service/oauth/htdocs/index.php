@@ -1,7 +1,6 @@
 <?php
 	session_start();
 	require_once __DIR__.'/vendor/autoload.php';
-	require_once __DIR__.'/inc/functions.php';
 	use Illuminate\Database\Capsule\Manager as Capsule;
 
 	// set up the capsule
@@ -27,7 +26,24 @@
 
 	// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
 	$capsule->bootEloquent();
-	
+
+    function parse_template($name) {
+        $file = file_get_contents("views/$name.html");
+        return str_replace(array('\\', '"'), array('\\\\', '\\"'), $file);
+    }
+
+	function verify_login($dni, $pass) {
+		$user = Capsule::table('users')->where('dni', '=', $dni)->first();
+		if($user != null) {
+			return $user['hash'] == hash_password($user['salt'], $pass);
+		}
+		return false;
+	}
+
+    function hash_password($salt, $pass) {
+        return sha1(md5($salt).hash('sha256', $pass));
+    }
+
 	// class autoloader
 	spl_autoload_register('__autoload');
 	function __autoload($nombre_clase) {
@@ -181,8 +197,11 @@
 					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', $user['uid'], $authParams);
 
 					$response = new Response(null, 302, array(
-						'Location' => $redirectUri
+						/*'Location' => $redirectUri*/
 					));
+					
+					// TODO: update
+					echo "$redirectUri";
 				} else {
 					// if login not ok, redirect to login form again
 					return new Response(null, 302, array(
