@@ -123,7 +123,7 @@ $ cd /opt/bitnami/hosted/oauth-gitt/service/api/htdocs
 $ composer install
 ```
 
-Además, posterior a la instalación de las dependencias, es necesario aplicar un parche en el directorio `/opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs/vendor`. Esto se puede realizar con el siguiente comando:
+Además, posterior a la instalación de las dependencias, es necesario aplicar un parche en el directorio `/opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs/vendor/league/oauth2-server/src/`. Esto se puede realizar con el siguiente comando:
 
 ```
 $ patch -p1 -d /opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs/vendor/league/oauth2-server/src/ --input /opt/bitnami/hosted/oauth-gitt/scripts/oauth2-server.patch
