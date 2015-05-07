@@ -23,11 +23,6 @@ Y ya seguís los pasos de la instalación. Notas:
 
 ## Instalación y configuración de nuestros ejemplos de OAuth
 
-Nota: Antes de empezar este paso, deberéis aseguraros que tenéis una clave privada en `~/.ssh` (por defecto se denomina `id_rsa`).
-
-- Si la tienes, genera una clave pública a través de esta clave (privada), y subid la clave pública a vuestra configuración de GitHub.
-- Si no la tienes, genera una nueva clave privada (denomínala `id_rsa`) y genera una pública a través de esta. Deben estar localizadas en `~/.ssh`. Sube esta clave pública generada a GitHub.
-
 Una vez instalada la LAMP Stack, seguid los siguientes pasos para clonar el repositorio y preparar la aplicación:
 
 ```
@@ -60,7 +55,7 @@ $ sudo /opt/bitnami/ctlscript.sh restart apache
 No os olvidéis de añadir los datos vuestros de Git para que cada uno sepa quién ha hecho un asentamiento:
 
 ```
-$ git congit --global user.name "TU NOMBRE COMPLETO o USUARIO_DE_GITHUB"
+$ git config --global user.name "TU NOMBRE COMPLETO o USUARIO_DE_GITHUB"
 $ git config --global user.email "TU_EMAIL@gmail.com"
 ```
 
@@ -123,7 +118,7 @@ $ cd /opt/bitnami/hosted/oauth-gitt/service/api/htdocs
 $ composer install
 ```
 
-Además, posterior a la instalación de las dependencias, es necesario aplicar un parche en el directorio `/opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs/vendor`. Esto se puede realizar con el siguiente comando:
+Además, posterior a la instalación de las dependencias, es necesario aplicar un parche en el directorio `/opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs/vendor/league/oauth2-server/src/`. Esto se puede realizar con el siguiente comando:
 
 ```
 $ patch -p1 -d /opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs/vendor/league/oauth2-server/src/ --input /opt/bitnami/hosted/oauth-gitt/scripts/oauth2-server.patch
