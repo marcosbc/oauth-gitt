@@ -1,0 +1,48 @@
+diff --git a/AuthorizationServer.php b/AuthorizationServer.php
+index 65b6117..06d91a1 100644
+--- a/AuthorizationServer.php
++++ b/AuthorizationServer.php
+@@ -261,7 +261,7 @@ class AuthorizationServer extends AbstractServer
+      */
+     public function issueAccessToken()
+ 	{
+-		$grantType = $this->getRequest()->request->get('grant_type');
++		$grantType = $this->getRequest()->get('grant_type');
+         if (is_null($grantType)) {
+             throw new Exception\InvalidRequestException('grant_type');
+         }
+diff --git a/Grant/AuthCodeGrant.php b/Grant/AuthCodeGrant.php
+index c0af6b7..ad68c90 100644
+--- a/Grant/AuthCodeGrant.php
++++ b/Grant/AuthCodeGrant.php
+@@ -177,18 +177,18 @@ class AuthCodeGrant extends AbstractGrant
+     public function completeFlow()
+     {
+         // Get the required params
+-        $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
++        $clientId = $this->server->getRequest()->get('client_id', $this->server->getRequest()->getUser());
+         if (is_null($clientId)) {
+             throw new Exception\InvalidRequestException('client_id');
+         }
+ 
+-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
++        $clientSecret = $this->server->getRequest()->get('client_secret',
+             $this->server->getRequest()->getPassword());
+         if (is_null($clientSecret)) {
+             throw new Exception\InvalidRequestException('client_secret');
+         }
+ 
+-        $redirectUri = $this->server->getRequest()->request->get('redirect_uri', null);
++        $redirectUri = $this->server->getRequest()->get('redirect_uri', null);
+         if (is_null($redirectUri)) {
+             throw new Exception\InvalidRequestException('redirect_uri');
+         }
+@@ -207,7 +207,7 @@ class AuthCodeGrant extends AbstractGrant
+         }
+ 
+         // Validate the auth code
+-        $authCode = $this->server->getRequest()->request->get('code', null);
++        $authCode = $this->server->getRequest()->get('code', null);
+         if (is_null($authCode)) {
+             throw new Exception\InvalidRequestException('code');
+         }

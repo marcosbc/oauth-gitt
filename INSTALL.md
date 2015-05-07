@@ -80,15 +80,15 @@ Para bajar los últimos cambios, tenéis que ejecutar lo siguiente:
 $ git pull origin master
 ```
 
-## Acceder a la aplicación en servidor local
+## Acceder a la aplicación servicio y servidores OAuth en servidor local
 
 Para poder probarla en local, deberéis añadir las siguientes líneas a `/etc/hosts`.
 
 ```
 127.0.0.1 oauthg10.tk
 127.0.0.1 www.oauthg10.tk
-127.0.0.1 client.oauthg10.tk
-127.0.0.1 www.client.oauthg10.tk
+127.0.0.1 api.oauthg10.tk
+127.0.0.1 www.api.oauthg10.tk
 127.0.0.1 oauth.oauthg10.tk
 127.0.0.1 www.oauth.oauthg10.tk
 ```
@@ -96,22 +96,43 @@ Para poder probarla en local, deberéis añadir las siguientes líneas a `/etc/h
 Por ejemplo, se puede realizar de la siguiente manera en un paso:
 
 ```
-$ sudo sh -c "echo '127.0.0.1 oauthg10.tk\n127.0.0.1 www.oauthg10.tk\n127.0.0.1 client.oauthg10.tk\n127.0.0.1 www.client.oauthg10.tk\n127.0.0.1 service.oauthg10.tk\n127.0.0.1 www.service.oauthg10.tk' >> /etc/hosts"
+$ sudo sh -c "echo '127.0.0.1 oauthg10.tk\n127.0.0.1 www.oauthg10.tk\n127.0.0.1 api.oauthg10.tk\n127.0.0.1 www.api.oauthg10.tk\n127.0.0.1 service.oauthg10.tk\n127.0.0.1 www.service.oauthg10.tk' >> /etc/hosts"
 ```
-
-Entonces, deberíamos poder acceder a http://oauthg10.tk/, http://client.oauthg10.tk/ y http://service.oauthg10.tk/ desde nuestro navegador.
 
 ## Instalar la base de datos con datos de ejemplo
 
 Para instalar la base de datos, basta con ejecutar lo siguiente:
 
 ```
-$ /opt/bitnami/use_lampstack
+$ sudo /opt/bitnami/use_lampstack
 $ php /opt/bitnami/hosted/oauth-gitt/scripts/service-install.php
 ```
 
 **Nota importante:** Se ha supuesto que la contraseña por defecto de la aplicación es `bitnami1`. Si no es el caso, cree una rama (denominada, por ejemplo, `deployed`) con los cambios necesarios en el script `service-install.php` (es decir, cambie `bitnami1` por su contraseña).
 Una vez instalados los datos de ejemplo puede volver a la rama `master`, ya que no se volverá a usar.
+
+## Instalar las dependencias de los servidores de OAuth
+
+Es necesario instalar las dependencias de los servidores de OAuth, ya que dependerán de otras bibliotecas de terceros. Para realizar esto, ejecute lo siguiente:
+
+```
+$ sudo /opt/bitnami/use_lampstack
+$ cd /opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs
+$ composer install
+$ cd /opt/bitnami/hosted/oauth-gitt/service/api/htdocs
+$ composer install
+```
+
+Además, posterior a la instalación de las dependencias, es necesario aplicar un parche en el directorio `/opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs/vendor`. Esto se puede realizar con el siguiente comando:
+
+```
+$ patch -p1 -d /opt/bitnami/hosted/oauth-gitt/service/oauth/htdocs/vendor/league/oauth2-server/src/ --input /opt/bitnami/hosted/oauth-gitt/scripts/oauth2-server.patch
+```
+
+Una vez realizado esto, debería de tener acceso a las páginas:
+
+ - http://oauth.oauthg10.tk/
+ - http://api.oauthg10.tk/
 
 ### Eliminar la base de datos con los datos de ejemplo
 
