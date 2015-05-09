@@ -18,4 +18,4 @@ patch -p1 -d /opt/bitnami/hosted/oauth-gitt/service/vendor/league/oauth2-server/
 
 # create db structure and insert sample data
 echo "oauth-gitt: CREATING DATABASE AND INSERTING SAMPLE DATA..."
-php /opt/bitnami/hosted/oauth-gitt/scripts/service-install.php
+php /opt/bitnami/hosted/oauth-gitt/scripts/setup-database.php

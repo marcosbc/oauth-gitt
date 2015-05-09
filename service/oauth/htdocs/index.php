@@ -1,9 +1,13 @@
 <?php
 	session_start();
 	require_once __DIR__.'/../../vendor/autoload.php';
+	require_once __DIR__.'/inc/functions.php';
 	use Illuminate\Database\Capsule\Manager as Capsule;
 
-	// set up the capsule
+	// Setup class autoloader
+	spl_autoload_register('__autoload');
+
+	// Set up the capsule/database manager
 	$capsule = new Capsule;
 	$capsule->addConnection([
 		'driver'    => 'mysql',
@@ -27,32 +31,7 @@
 	// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
 	$capsule->bootEloquent();
 
-    function parse_template($name) {
-        $file = file_get_contents("views/$name.html");
-        return str_replace(array('\\', '"'), array('\\\\', '\\"'), $file);
-    }
-
-	function verify_login($dni, $pass) {
-		$user = Capsule::table('users')->where('dni', '=', $dni)->first();
-		if($user != null) {
-			return $user['hash'] == hash_password($user['salt'], $pass);
-		}
-		return false;
-	}
-
-    function hash_password($salt, $pass) {
-        return sha1(md5($salt).hash('sha256', $pass));
-    }
-
-	// class autoloader
-	spl_autoload_register('__autoload');
-	function __autoload($nombre_clase) {
-		$loc = strrpos($nombre_clase, '\\');
-		$path = str_replace('\\', '/', substr($nombre_clase, 0, $loc + 1));
-		$class = substr($nombre_clase, $loc + 1);
-		include "$path$class.php";
-	}
-
+	// Setup server
 	$server = new \League\OAuth2\Server\AuthorizationServer;
 	$server->setSessionStorage(new Storage\SessionStorage);
 	$server->setAccessTokenStorage(new Storage\AccessTokenStorage);

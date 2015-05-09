@@ -14,4 +14,4 @@ rm -rf vendor composer.lock
 
 # create db structure and insert sample data
 echo "oauth-gitt: DROPPING DATABASE..."
-php /opt/bitnami/hosted/oauth-gitt/scripts/service-install.php remove
+php /opt/bitnami/hosted/oauth-gitt/scripts/setup-database.php remove
