@@ -1,13 +1,13 @@
 diff --git a/AuthorizationServer.php b/AuthorizationServer.php
-index 65b6117..06d91a1 100644
+index 2d9e12f..bb441ef 100644
 --- a/AuthorizationServer.php
 +++ b/AuthorizationServer.php
 @@ -261,7 +261,7 @@ class AuthorizationServer extends AbstractServer
       */
      public function issueAccessToken()
- 	{
--		$grantType = $this->getRequest()->request->get('grant_type');
-+		$grantType = $this->getRequest()->get('grant_type');
+     {
+-        $grantType = $this->getRequest()->request->get('grant_type');
++        $grantType = $this->getRequest()->get('grant_type');
          if (is_null($grantType)) {
              throw new Exception\InvalidRequestException('grant_type');
          }
