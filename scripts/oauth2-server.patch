@@ -46,3 +46,124 @@ index c0af6b7..ad68c90 100644
          if (is_null($authCode)) {
              throw new Exception\InvalidRequestException('code');
          }
+diff --git a/Grant/ClientCredentialsGrant.php b/Grant/ClientCredentialsGrant.php
+index e219c63..c174e4f 100644
+--- a/Grant/ClientCredentialsGrant.php
++++ b/Grant/ClientCredentialsGrant.php
+@@ -61,12 +61,12 @@ class ClientCredentialsGrant extends AbstractGrant
+     public function completeFlow()
+     {
+         // Get the required params
+-        $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
++        $clientId = $this->server->getRequest()->get('client_id', $this->server->getRequest()->getUser());
+         if (is_null($clientId)) {
+             throw new Exception\InvalidRequestException('client_id');
+         }
+ 
+-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
++        $clientSecret = $this->server->getRequest()->get('client_secret',
+             $this->server->getRequest()->getPassword());
+         if (is_null($clientSecret)) {
+             throw new Exception\InvalidRequestException('client_secret');
+@@ -86,7 +86,7 @@ class ClientCredentialsGrant extends AbstractGrant
+         }
+ 
+         // Validate any scopes that are in the request
+-        $scopeParam = $this->server->getRequest()->request->get('scope', '');
++        $scopeParam = $this->server->getRequest()->get('scope', '');
+         $scopes = $this->validateScopes($scopeParam, $client);
+ 
+         // Create a new session
+diff --git a/Grant/PasswordGrant.php b/Grant/PasswordGrant.php
+index 7192108..dc67a46 100644
+--- a/Grant/PasswordGrant.php
++++ b/Grant/PasswordGrant.php
+@@ -90,12 +90,12 @@ class PasswordGrant extends AbstractGrant
+     public function completeFlow()
+     {
+         // Get the required params
+-        $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
++        $clientId = $this->server->getRequest()->get('client_id', $this->server->getRequest()->getUser());
+         if (is_null($clientId)) {
+             throw new Exception\InvalidRequestException('client_id');
+         }
+ 
+-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
++        $clientSecret = $this->server->getRequest()->get('client_secret',
+             $this->server->getRequest()->getPassword());
+         if (is_null($clientSecret)) {
+             throw new Exception\InvalidRequestException('client_secret');
+@@ -114,12 +114,12 @@ class PasswordGrant extends AbstractGrant
+             throw new Exception\InvalidClientException();
+         }
+ 
+-        $username = $this->server->getRequest()->request->get('username', null);
++        $username = $this->server->getRequest()->get('username', null);
+         if (is_null($username)) {
+             throw new Exception\InvalidRequestException('username');
+         }
+ 
+-        $password = $this->server->getRequest()->request->get('password', null);
++        $password = $this->server->getRequest()->get('password', null);
+         if (is_null($password)) {
+             throw new Exception\InvalidRequestException('password');
+         }
+@@ -133,7 +133,7 @@ class PasswordGrant extends AbstractGrant
+         }
+ 
+         // Validate any scopes that are in the request
+-        $scopeParam = $this->server->getRequest()->request->get('scope', '');
++        $scopeParam = $this->server->getRequest()->get('scope', '');
+         $scopes = $this->validateScopes($scopeParam, $client);
+ 
+         // Create a new session
+diff --git a/Grant/RefreshTokenGrant.php b/Grant/RefreshTokenGrant.php
+index 1e11bd8..fa5995e 100644
+--- a/Grant/RefreshTokenGrant.php
++++ b/Grant/RefreshTokenGrant.php
+@@ -88,12 +88,12 @@ class RefreshTokenGrant extends AbstractGrant
+      */
+     public function completeFlow()
+     {
+-        $clientId = $this->server->getRequest()->request->get('client_id', $this->server->getRequest()->getUser());
++        $clientId = $this->server->getRequest()->get('client_id', $this->server->getRequest()->getUser());
+         if (is_null($clientId)) {
+             throw new Exception\InvalidRequestException('client_id');
+         }
+ 
+-        $clientSecret = $this->server->getRequest()->request->get('client_secret',
++        $clientSecret = $this->server->getRequest()->get('client_secret',
+             $this->server->getRequest()->getPassword());
+         if (is_null($clientSecret)) {
+             throw new Exception\InvalidRequestException('client_secret');
+@@ -112,7 +112,7 @@ class RefreshTokenGrant extends AbstractGrant
+             throw new Exception\InvalidClientException();
+         }
+ 
+-        $oldRefreshTokenParam = $this->server->getRequest()->request->get('refresh_token', null);
++        $oldRefreshTokenParam = $this->server->getRequest()->get('refresh_token', null);
+         if ($oldRefreshTokenParam === null) {
+             throw new Exception\InvalidRequestException('refresh_token');
+         }
+@@ -136,7 +136,7 @@ class RefreshTokenGrant extends AbstractGrant
+         $scopes = $this->formatScopes($session->getScopes());
+ 
+         // Get and validate any requested scopes
+-        $requestedScopesString = $this->server->getRequest()->request->get('scope', '');
++        $requestedScopesString = $this->server->getRequest()->get('scope', '');
+         $requestedScopes = $this->validateScopes($requestedScopesString, $client);
+ 
+         // If no new scopes are requested then give the access token the original session scopes
+diff --git a/ResourceServer.php b/ResourceServer.php
+index ab9ebec..0ada257 100644
+--- a/ResourceServer.php
++++ b/ResourceServer.php
+@@ -142,7 +142,7 @@ class ResourceServer extends AbstractServer
+         } elseif ($headerOnly === false) {
+             $accessToken = ($this->getRequest()->server->get('REQUEST_METHOD') === 'GET')
+                                 ? $this->getRequest()->query->get($this->tokenKey)
+-                                : $this->getRequest()->request->get($this->tokenKey);
++                                : $this->getRequest()->get($this->tokenKey);
+         }
+ 
+         if (empty($accessToken)) {
