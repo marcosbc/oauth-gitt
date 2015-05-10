@@ -192,10 +192,10 @@
 			),
 			'oauth_clients' => array(
 				array(
-					'name' => 'oauth-gitt',
+					'name' => 'money-vault',
 					'public' => '123456789abcdefghijklmnopqrstuvwxyz',
 					'secret' => 'zyxwvutsrqponmlkjihgfedcba987654321',
-					'redirect_uri' => 'http://google.com',
+					'redirect_uri' => 'moneyvault://',
 				),
 			),
 		);

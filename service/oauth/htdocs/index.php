@@ -176,11 +176,8 @@
 					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', $user['uid'], $authParams);
 
 					$response = new Response(null, 302, array(
-						/*'Location' => $redirectUri*/
+						'Location' => $redirectUri
 					));
-					
-					// TODO: update
-					echo "$redirectUri";
 				} else {
 					// if login not ok, redirect to login form again
 					return new Response(null, 302, array(
@@ -197,11 +194,8 @@
 					// if login ok, redirect to redirect-uri
 					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', $user['uid'], $authParams);
 					$response = new Response(null, 302, array(
-						/*'Location' => $redirectUri*/
+						'Location' => $redirectUri
 					));
-
-					// TODO: update
-					echo "$redirectUri";
 				}
 			}
 		}
