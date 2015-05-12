@@ -1,5 +1,4 @@
 <?php
-	session_start();
 	require_once __DIR__.'/../../vendor/autoload.php';
 	require_once __DIR__.'/inc/functions.php';
 	use Illuminate\Database\Capsule\Manager as Capsule;
@@ -102,16 +101,8 @@
 		// the table must exist for the code to come to this point
 		$app = Capsule::table('oauth_clients')->where('id', '=', $_GET['client_id'])->first();
 
-		// to improve
-		if(!isset($_SESSION['uid'])) {
-			$loginform = parse_template('loginform');
-			eval("\$loginform = \"$loginform\";");
-		} else {
-			$user = Capsule::table('users')->where('uid', '=', $_SESSION['uid'])->first();
-			$name_formatted = strtoupper("{$user['name']} {$user['lastname']}");
-			$userinfo = parse_template('userinfo');
-			eval("\$userinfo = \"$userinfo\";");
-		}
+		$loginform = parse_template('loginform');
+		eval("\$loginform = \"$loginform\";");
 
 		$view = parse_template('login');
 		eval("\$view = \"$view\";");
@@ -162,41 +153,22 @@
 
 		// The user accepted
 		else {
-			if(!isset($_SESSION['uid'])) {
-				// verify login
-				if(verify_login($_POST['dni'], $_POST['pass'])) {
-					$user = Capsule::table('users')->where('dni', '=', $_POST['dni'])->first();
+			// verify login
+			if(verify_login($_POST['dni'], $_POST['pass'])) {
+				$user = Capsule::table('users')->where('dni', '=', $_POST['dni'])->first();
 
-					// set the session
-					$_SESSION = array();
-					$_SESSION['uid'] = $user['uid'];
+				// if login ok, redirect to redirect-uri
+				// note the owner type is user, since we dont store app-specific information
+				$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', $user['uid'], $authParams);
 
-					// if login ok, redirect to redirect-uri
-					// note the owner type is user, since we dont store app-specific information
-					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', $user['uid'], $authParams);
-
-					$response = new Response(null, 302, array(
-						'Location' => $redirectUri
-					));
-				} else {
-					// if login not ok, redirect to login form again
-					return new Response(null, 302, array(
-						'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
-					));
-				}
+				$response = new Response(null, 302, array(
+					'Location' => $redirectUri
+				));
 			} else {
-				$user = Capsule::table('users')->where('uid', '=', $_SESSION['uid'])->first();
-				if($user == null) {
-					return new Response(null, 302, array(
-						'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
-					));
-				} else {
-					// if login ok, redirect to redirect-uri
-					$redirectUri = $server->getGrantType('authorization_code')->newAuthorizeRequest('user', $user['uid'], $authParams);
-					$response = new Response(null, 302, array(
-						'Location' => $redirectUri
-					));
-				}
+				// if login not ok, redirect to login form again
+				return new Response(null, 302, array(
+					'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
+				));
 			}
 		}
 
