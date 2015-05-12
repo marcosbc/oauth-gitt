@@ -78,6 +78,15 @@
 	$router->get('/authorize', function(Request $request) use ($server) {
 		try {
 			$authParams = $server->getGrantType('authorization_code')->checkAuthorizeParams();
+
+			if(count($authParams['scopes']) <= 0) {
+				throw new \League\OAuth2\Server\Exception\OAuthException('No scope specified.');
+			}
+
+			foreach($authParams['scopes'] as $scope) {
+				if($scope->getId() === 'permission_read_credentials')
+					throw new \League\OAuth2\Server\Exception\InvalidScopeException($scope->getId());
+			}
 		} catch(\Exception $e) {
 			return new Response(
 				json_encode(array(
@@ -88,6 +97,16 @@
 				$e->getHttpHeaders()
 			);
 		}
+
+		$permission_list = "";
+		$permission_template = parse_template('login_permissionsgroup_permission');
+		$permission_group = parse_template('login_permissionsgroup');
+		foreach($authParams['scopes'] as $scope) {
+			$scope_id = $scope->getId();
+			$scope_description = $scope->getDescription();
+			eval("\$permission_list .= \"$permission_template\";");
+		}
+		eval("\$permission_group = \"$permission_group\";");
 
 		$title = "Vincular app con Urbank";
 		$logo = "Urbank";

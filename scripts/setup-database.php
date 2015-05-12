@@ -176,19 +176,19 @@
 			'oauth_scopes' => array(
 				array(
 					'id' => 'permission_access_account',
-					'description' => 'Read your account information'),
+					'description' => 'Ver informaci&oacute;n de su cuenta'),
 				array(
 					'id' => 'permission_modify_account',
-					'description' => 'Modify your account information'),
+					'description' => 'Modificar informaci&oacute;n de su cuenta'),
 				array(
 					'id' => 'permission_read_transaction',
-					'description' => 'Read transactions information'),
+					'description' => 'Ver transacciones'),
 				array(
 					'id' => 'permission_create_transaction',
-					'description' => 'Create a new transaction'),
+					'description' => 'Crear transacciones'),
 				array(
 					'id' => 'permission_read_credentials',
-					'description' => 'Read your passwords'),
+					'description' => 'Leer sus credenciales'),
 			),
 			'oauth_clients' => array(
 				array(
