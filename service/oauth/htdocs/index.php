@@ -71,7 +71,7 @@
 
 		// login page
 		return new Response('', 302, array(
-			'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
+			'Location' => "/authorize?client_id=".urlencode($_GET['client_id'])."&redirect_uri=".urlencode($_GET['redirect_uri'])."&response_type=".urlencode($_GET['response_type'])
 		));
 	});
 
@@ -167,7 +167,7 @@
 			} else {
 				// if login not ok, redirect to login form again
 				return new Response(null, 302, array(
-					'Location' => "/authorize?client_id={$_GET['client_id']}&redirect_uri={$_GET['redirect_uri']}&response_type={$_GET['response_type']}"
+					'Location' => "/authorize?client_id=".urlencode($_GET['client_id'])."&redirect_uri=".urlencode($_GET['redirect_uri'])."&response_type=".urlencode($_GET['response_type'])
 				));
 			}
 		}
