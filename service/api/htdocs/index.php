@@ -123,9 +123,9 @@
 		);
 	} catch(\Exception $e) {
 		$response = new Response(json_encode(array(
-			'status_code' => 500,
+			'status_code' => 400,
 			'message' => $e->getMessage(),
-		)), 500);
+		)), 400);
 	}
 
 	// return response
