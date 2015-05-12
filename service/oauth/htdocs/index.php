@@ -131,7 +131,7 @@
 		// if authorize isn't set, redirect to login
 		if(!isset($_POST['authorize'])) {
 			$response = new Response(null, 302, array(
-				'Location' => '/authorize'
+				'Location' => "/authorize?client_id=".urlencode($_GET['client_id'])."&redirect_uri=".urlencode($_GET['redirect_uri'])."&response_type=".urlencode($_GET['response_type'])
 			));
 		}
 
