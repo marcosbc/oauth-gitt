@@ -1,5 +1,9 @@
 # OAuth
 
+## Cliente de OAuth en Android
+
+También se ha realizado un proyecto de un cliente de OAuth 2.0, que hace uso de este servidor. El enlace es el siguiente: [https://github.com/marcosbc/oauth-gitt-android/](https://github.com/marcosbc/oauth-gitt-android/).
+
 ## Enlaces
 
 Los siguientes enlaces servirán para documentación:
