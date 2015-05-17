@@ -1,8 +1,16 @@
-# OAuth
+# OAuth 2.0: Implementación y seguridad. Un caso práctico.
+
+## Componentes del equipo
+
+- Marcos Bjorkelund: [marcosbc](https://github.com/marcosbc)
+- Luís Casabuena Gómez: [Luiskitriski](https://github.com/Luiskitriski)
+- Álvaro Páez Guerra: [AlvaroPaez](https://github.com/AlvaroPaez)
+- Jaime Conde Ojeda: [jaimecoj](https://github.com/jaimecoj)
+- Pablo González Sojo: [pablogs22](https://github.com/pablogs22)
 
 ## Cliente de OAuth en Android
 
-También se ha realizado un proyecto de un cliente de OAuth 2.0, que hace uso de este servidor. El enlace es el siguiente: [https://github.com/marcosbc/oauth-gitt-android/](https://github.com/marcosbc/oauth-gitt-android/).
+También se ha realizado un proyecto de un cliente de OAuth 2.0, que hace uso de este servidor. El enlace es el siguiente: https://github.com/marcosbc/oauth-gitt-android/
 
 ## Enlaces
 
