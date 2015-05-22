@@ -233,6 +233,12 @@
 					'secret' => 'zyxwvutsrqponmlkjihgfedcba987654321',
 					'redirect_uri' => 'moneyvault://',
 				),
+				array(
+					'name' => 'sample-app',
+					'public' => 'qwertyuiopasdfghjklzxcvbnm123456789',
+					'secret' => '987654321mnbvcxzlkjhgfdsapoiuytrewq',
+					'redirect_uri' => 'https://sample.oauthg10.tk',
+				),
 			),
 		);
 

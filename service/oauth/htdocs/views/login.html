@@ -14,7 +14,7 @@
 			{$userinfo}
 			<!-- TODO -->
 		</header>
-		<form action="/authorize?client_id={$_GET['client_id']}&amp;redirect_uri={$_GET['redirect_uri']}&amp;response_type={$_GET['response_type']}" method="post">
+		<form action="/authorize?client_id={$_GET['client_id']}&amp;redirect_uri={$_GET['redirect_uri']}&amp;response_type={$_GET['response_type']}&amp;scope={$_GET['scope']}" method="post">
 			<fieldset>
 				{$loginform}
 				<p class="authorize">
