@@ -277,3 +277,26 @@ main > section.material p#iban {
 	color: #fff;
 	text-shadow: none;
 }
+
+/* mobile/responsive */
+
+@media all and (max-width: 640px) {
+	main, main > section.material {
+		width: 100%;
+	}
+	main > section#login input[type="text"],
+	main > section#login input[type="password"] {
+		width: -webkit-calc(100% - 24px);
+		width: -moz-calc(100% - 24px);
+		width: -o-calc(100% - 24px);
+		width: calc(100% - 24px);
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	main > section#login {
+		width: 90%;
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+}
